@@ -1,7 +1,6 @@
 import React from 'react'
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel, SelectSeparator, SelectScrollUpButton, SelectScrollDownButton } from "@/components/ui/select"
-import { Clock, MapPin } from 'lucide-react'
+import LiveClock from '@/components/live_clock'
+import ZoneSelection from '@/components/zone_selection';
 
 
 export default async function Component({ searchParams }) {
@@ -12,10 +11,6 @@ export default async function Component({ searchParams }) {
 
   let responseZones = await fetch('https://api.waktusolat.app/zones')
   let dataZones = await responseZones.json()
-  console.log(dataZones);
-
-
-  let negeri = dataZones.find(item => item.jakimCode === zone)
 
   // Function to group the data by 'negeri'
   const groupByNegeri = (data) => {
@@ -30,10 +25,6 @@ export default async function Component({ searchParams }) {
   };
 
   const groupedByNegeri = groupByNegeri(dataZones);
-
-
-  // const [selectedLocation, setSelectedLocation] = useState('mecca')
-
 
   const date = new Date();
   const today = date.getDate();
@@ -54,9 +45,16 @@ export default async function Component({ searchParams }) {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-lg">{hijriDate}</p>
-            <p className="text-sm opacity-75">13 September 2024</p>
+            <p className="text-sm opacity-75">
+              <LiveClock format={'d MMM yyyy'} />
+            </p>
           </div>
-
+          <div className="bg-purple-50 rounded-lg p-6 text-center">
+            <h2 className="text-xl font-semibold text-purple-800 mb-2">Waktu Sekarang</h2>
+            <div className="text-4xl font-bold text-purple-600 mb-1">
+              <LiveClock />
+            </div>
+          </div>
         </div>
       </div>
       <div className="p-6">
@@ -72,32 +70,7 @@ export default async function Component({ searchParams }) {
             </div>
           ))}
         </div>
-        <div className="bg-purple-50 rounded-lg p-6 text-center">
-          <h2 className="text-xl font-semibold text-purple-800 mb-2">Next Prayer</h2>
-          <div className="text-4xl font-bold text-purple-600 mb-1">00:45:30</div>
-          <p className="text-sm text-purple-700">Until Asr</p>
-
-        </div>
-        <div className="mx-auto rounded-lg p-6  md:w-1/2 xl:w-1/4">
-          <Select value={zone} >
-            {/* <Select value={selectedLocation} onValueChange={setSelectedLocation}> */}
-            <SelectTrigger  >
-              <SelectValue placeholder="Pilih zon" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(groupedByNegeri).map((negeri) => (
-                <SelectGroup key={negeri}>
-                  <SelectLabel>{negeri}</SelectLabel>
-                  {groupedByNegeri[negeri].map((item) => (
-                    <SelectItem key={item.jakimCode} value={item.jakimCode}>
-                      {item.jakimCode} - {item.daerah}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <ZoneSelection zone={zone} groupedByNegeri={groupedByNegeri} />
       </div>
     </div>
   )
