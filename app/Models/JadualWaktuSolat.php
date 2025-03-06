@@ -12,6 +12,7 @@ class JadualWaktuSolat extends Model
         'tahun',
         'bulan',
         'hari',
+        'tarikh_hijrah',
         'subuh',
         'syuruk',
         'zohor',
